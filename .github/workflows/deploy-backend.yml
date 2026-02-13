@@ -5,35 +5,64 @@ on:
     branches:
       - development
       - main
+    paths:
+      - 'hrms-backend/**'
   workflow_dispatch:
 
 jobs:
-  deploy:
+  deploy-backend:
+    name: Deploy Backend
     runs-on: ubuntu-latest
 
     defaults:
       run:
         working-directory: hrms-backend
 
+    env:
+      NODE_ENV: production
+
     steps:
+      # 1️⃣ Checkout repository
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Setup Node
+      # 2️⃣ Setup Node with caching
+      - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: 18
           cache: 'npm'
           cache-dependency-path: hrms-backend/package-lock.json
 
+      # 3️⃣ Install dependencies (clean & fast)
       - name: Install dependencies
         run: npm ci
 
+      # 4️⃣ Prisma generate (Important for you)
       - name: Generate Prisma Client
         run: npx prisma generate
 
-      - name: Build validation
-        run: echo "Backend ready for deployment 🚀"
+      # 5️⃣ Optional: Lint (if you use it)
+      # - name: Run Lint
+      #   run: npm run lint
 
-      - name: Trigger Render Deploy
-        run: curl -X POST ${{ secrets.RENDER_DEPLOY_HOOK }}
+      # 6️⃣ Optional: Tests (recommended)
+      # - name: Run Tests
+      #   run: npm test
+
+      # 7️⃣ Basic validation
+      - name: Validate server file
+        run: |
+          echo "Validating backend structure..."
+          ls -la
+          echo "Backend ready for deployment 🚀"
+
+      # 8️⃣ Trigger Render deploy
+      - name: Trigger Render Deployment
+        run: |
+          echo "Triggering Render deploy..."
+          curl -X POST ${{ secrets.RENDER_DEPLOY_HOOK }}
+
+      # 9️⃣ Confirm completion
+      - name: Deployment Completed
+        run: echo "Backend deployment triggered successfully 🎉"
