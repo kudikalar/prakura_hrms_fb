@@ -4,52 +4,19 @@ on:
   push:
     branches:
       - development
+      - main
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
 
-    env:
-      NODE_ENV: production
-
     steps:
-      # 1️⃣ Checkout repository
-      - name: Checkout code
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-      # 2️⃣ Setup Node
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
+      - uses: actions/setup-node@v4
         with:
           node-version: 18
-          cache: 'npm'
 
-      # 3️⃣ Install dependencies
-      - name: Install dependencies
-        run: npm ci
+      - run: npm install
 
-      # 4️⃣ Generate Prisma Client (Important for you)
-      - name: Generate Prisma Client
-        run: npx prisma generate
-
-      # 5️⃣ Run tests (Optional but recommended)
-      # Uncomment if you have tests
-      # - name: Run Tests
-      #   run: npm test
-
-      # 6️⃣ Basic build verification
-      - name: Validate project structure
-        run: |
-          echo "Checking server file..."
-          ls -la
-          echo "Backend Ready for Deployment"
-
-      # 7️⃣ Trigger Render Deployment
-      - name: Trigger Render Deploy Hook
-        run: |
-          echo "Triggering Render Deploy..."
-          curl -X POST ${{ secrets.RENDER_DEPLOY_HOOK }}
-
-      # 8️⃣ Confirm completion
-      - name: Deployment Triggered
-        run: echo "Render deployment successfully triggered 🚀"
+      - run: echo "Workflow is running successfully 🚀"
