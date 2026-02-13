@@ -3,6 +3,41 @@ import bcrypt from 'bcryptjs';
 
 const VALID_ROLES = ['ADMIN', 'HR', 'EMPLOYEE'];
 
+/* ===================================================== */
+/* ✅ NEW: GET ALL EMPLOYEES (ADDED — NO REMOVAL)        */
+/* ===================================================== */
+
+/**
+ * GET ALL EMPLOYEES
+ * GET /api/employees
+ */
+export const getEmployees = async (req, res) => {
+  try {
+    const employees = await prisma.user.findMany({
+      select: {
+        id: true,
+        name: true,
+        email: true,
+        role: true,
+        createdAt: true
+      },
+      orderBy: { id: 'desc' }
+    });
+
+    return res.status(200).json(employees);
+
+  } catch (error) {
+    console.error('GET EMPLOYEES ERROR:', error);
+    return res.status(500).json({
+      message: 'Failed to fetch employees'
+    });
+  }
+};
+
+/* ===================================================== */
+/* EXISTING CODE BELOW (UNCHANGED)                       */
+/* ===================================================== */
+
 /**
  * CREATE EMPLOYEE
  * POST /api/employees
@@ -51,13 +86,13 @@ export const createEmployee = async (req, res) => {
       }
     });
 
-    res.status(201).json({
+    return res.status(201).json({
       employee
     });
 
   } catch (error) {
     console.error('CREATE EMPLOYEE ERROR:', error);
-    res.status(500).json({
+    return res.status(500).json({
       message: 'Failed to create employee'
     });
   }
@@ -88,11 +123,11 @@ export const getEmployeeById = async (req, res) => {
       });
     }
 
-    res.status(200).json(employee);
+    return res.status(200).json(employee);
 
   } catch (error) {
     console.error('GET EMPLOYEE ERROR:', error);
-    res.status(500).json({
+    return res.status(500).json({
       message: 'Failed to fetch employee'
     });
   }
@@ -106,7 +141,6 @@ export const updateEmployee = async (req, res) => {
   try {
     const { id } = req.params;
 
-    // ✅ Only allow fields that exist in Prisma user model
     const allowedFields = ['name', 'email', 'role'];
     const updateData = {};
 
@@ -134,7 +168,7 @@ export const updateEmployee = async (req, res) => {
       }
     });
 
-    res.status(200).json(employee);
+    return res.status(200).json(employee);
 
   } catch (error) {
     console.error('UPDATE EMPLOYEE ERROR:', error);
@@ -145,12 +179,11 @@ export const updateEmployee = async (req, res) => {
       });
     }
 
-    res.status(500).json({
+    return res.status(500).json({
       message: 'Failed to update employee'
     });
   }
 };
-
 
 /**
  * DELETE EMPLOYEE
@@ -164,7 +197,7 @@ export const deleteEmployee = async (req, res) => {
       where: { id: Number(id) }
     });
 
-    res.status(200).json({
+    return res.status(200).json({
       message: 'Employee deleted successfully'
     });
 
@@ -177,9 +210,8 @@ export const deleteEmployee = async (req, res) => {
       });
     }
 
-    res.status(500).json({
+    return res.status(500).json({
       message: 'Failed to delete employee'
     });
   }
 };
-

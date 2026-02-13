@@ -4,7 +4,8 @@ import {
   createEmployee,
   getEmployeeById,
   updateEmployee,
-  deleteEmployee
+  deleteEmployee,
+  getEmployees // ✅ Added
 } from '../controllers/employee.controller.js';
 
 const router = express.Router();
@@ -15,6 +16,20 @@ const router = express.Router();
  *   name: Employees
  *   description: Employee management APIs
  */
+
+/**
+ * @swagger
+ * /api/employees:
+ *   get:
+ *     summary: Get all employees
+ *     tags: [Employees]
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: List of employees
+ */
+router.get('/', authMiddleware, getEmployees);
 
 /**
  * @swagger
