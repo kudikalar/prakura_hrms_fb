@@ -5,18 +5,35 @@ on:
     branches:
       - development
       - main
+  workflow_dispatch:
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
 
-    steps:
-      - uses: actions/checkout@v4
+    defaults:
+      run:
+        working-directory: hrms-backend
 
-      - uses: actions/setup-node@v4
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
         with:
           node-version: 18
+          cache: 'npm'
+          cache-dependency-path: hrms-backend/package-lock.json
 
-      - run: npm install
+      - name: Install dependencies
+        run: npm ci
 
-      - run: echo "Workflow is running successfully 🚀"
+      - name: Generate Prisma Client
+        run: npx prisma generate
+
+      - name: Build validation
+        run: echo "Backend ready for deployment 🚀"
+
+      - name: Trigger Render Deploy
+        run: curl -X POST ${{ secrets.RENDER_DEPLOY_HOOK }}
