@@ -11,8 +11,8 @@ export default function Layout({ children }) {
     navigate("/", { replace: true });
   };
 
-  // Hide back button on dashboard itself
-  const showBackButton = location.pathname !== "/dashboard";
+  // Show back button on everything except dashboard root
+  const showBackButton = !location.pathname.startsWith("/dashboard");
 
   const handleBackToDashboard = () => {
     navigate("/dashboard", { replace: true });
@@ -50,4 +50,4 @@ export default function Layout({ children }) {
       <main className="app-content">{children}</main>
     </div>
   );
-}
+} 

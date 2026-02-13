@@ -8,26 +8,36 @@ datasource db {
 }
 
 model User {
-  id         Int         @id @default(autoincrement())
-  name       String
-  email      String      @unique
-  password   String
-  role       String
-  createdAt  DateTime    @default(now())
-  inductions Induction[]
+  id           Int          @id @default(autoincrement())
+  name         String
+  email        String       @unique
+  password     String
+  role         String       // ADMIN | HR | EMPLOYEE
+  createdAt    DateTime     @default(now())
+
+  // ✅ Department Relation
+  departmentId Int?
+  department   Department?  @relation(fields: [departmentId], references: [id])
+
+  // ✅ Induction Relation
+  inductions   Induction[]
 }
 
 model Department {
-  id   Int    @id @default(autoincrement())
-  name String
+  id        Int      @id @default(autoincrement())
+  name      String   @unique
+  createdAt DateTime @default(now())
+
+  // ✅ Reverse Relation
+  employees User[]
 }
 
 model Induction {
   id          Int       @id @default(autoincrement())
   employeeId  Int
-  status      String // NOT_STARTED | IN_PROGRESS | COMPLETED
+  status      String    // NOT_STARTED | IN_PROGRESS | COMPLETED
   assignedAt  DateTime  @default(now())
   completedAt DateTime?
 
-  employee User @relation(fields: [employeeId], references: [id])
+  employee User @relation(fields: [employeeId], references: [id], onDelete: Cascade)
 }

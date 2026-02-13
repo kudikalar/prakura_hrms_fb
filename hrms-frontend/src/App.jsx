@@ -12,6 +12,9 @@ import CreateEmployee from "./pages/employees/CreateEmployee";
 import EditEmployee from "./pages/employees/EditEmployee";
 import DeleteEmployee from "./pages/employees/DeleteEmployee";
 
+// ✅ NEW – Department Pages
+import Departments from "./pages/Departments";
+
 
 // =========================
 // Protected Route
@@ -77,6 +80,16 @@ export default function App() {
             {/* Default inside /employees */}
             <Route index element={<Navigate to="create" replace />} />
           </Route>
+
+          {/* ✅ Departments Route (Simple Page) */}
+          <Route
+            path="/departments"
+            element={
+              <PrivateRoute>
+                <Departments />
+              </PrivateRoute>
+            }
+          />
 
           {/* Catch All */}
           <Route path="*" element={<Navigate to="/" replace />} />

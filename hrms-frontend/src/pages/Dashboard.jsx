@@ -14,16 +14,31 @@ export default function Dashboard() {
   return (
     <Layout>
       <div className="page-wrapper">
+
         {/* Sidebar */}
         <div className="sidebar">
           <div>
             <h3>HRMS</h3>
 
-            <NavLink to="/dashboard">🏠 Dashboard</NavLink>
-            <NavLink to="/employees">👨‍💼 Employees</NavLink>
-            <NavLink to="/departments">🏢 Departments</NavLink>
-            <NavLink to="/attendance">🕒 Attendance</NavLink>
-            <NavLink to="/reports">📊 Reports</NavLink>
+            <NavLink to="/dashboard" className="nav-link">
+              🏠 Dashboard
+            </NavLink>
+
+            <NavLink to="/employees" className="nav-link">
+              👨‍💼 Employees
+            </NavLink>
+
+            <NavLink to="/departments" className="nav-link">
+              🏢 Departments
+            </NavLink>
+
+            <NavLink to="/attendance" className="nav-link">
+              🕒 Attendance
+            </NavLink>
+
+            <NavLink to="/reports" className="nav-link">
+              📊 Reports
+            </NavLink>
           </div>
 
           <button className="logout-btn" onClick={handleLogout}>
@@ -33,10 +48,13 @@ export default function Dashboard() {
 
         {/* Main Content */}
         <div className="main-content">
+
           <div className="card">
             <div className="dashboard-header">
               <h2>Dashboard</h2>
-              <span className="welcome-text">Welcome Admin 👋</span>
+              <span className="welcome-text">
+                Welcome Admin 👋
+              </span>
             </div>
           </div>
 
@@ -56,6 +74,7 @@ export default function Dashboard() {
               <p className="stat-number text-yellow">15</p>
             </div>
           </div>
+
         </div>
       </div>
     </Layout>

@@ -1,7 +1,10 @@
 import axios from "axios";
 
-// Use environment variable if available
-const BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:5000/api";
+// ===============================
+// BASE URL
+// ===============================
+const BASE_URL =
+  import.meta.env.VITE_API_URL || "http://localhost:5000/api";
 
 const instance = axios.create({
   baseURL: BASE_URL,
@@ -17,10 +20,12 @@ const instance = axios.create({
 instance.interceptors.request.use(
   (config) => {
     const token = localStorage.getItem("token");
-    // attach token for protected APIs only
+
+    // Attach token if exists
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }
+
     return config;
   },
   (error) => Promise.reject(error)
@@ -32,20 +37,48 @@ instance.interceptors.request.use(
 instance.interceptors.response.use(
   (response) => response,
   (error) => {
-    console.error("API Error:", error.response || error);
+    console.error("API Error:", error?.response || error);
 
     const status = error?.response?.status;
     const token = localStorage.getItem("token");
 
-    // ✅ IMPORTANT FIX:
-    // Only auto-logout/redirect when user ALREADY has a token (session expired case).
-    // During login, there is no token, so DO NOT redirect (so error stays on page).
-    if (status === 401 && token) {
-      localStorage.removeItem("token");
-      window.location.replace("/"); // safer than href (no extra history entry)
+    // ===============================
+    // NETWORK ERROR
+    // ===============================
+    if (!error.response) {
+      console.error("Network error or server not reachable");
+      return Promise.reject({
+        message: "Server not reachable. Please try again.",
+      });
     }
 
-    return Promise.reject(error);
+    // ===============================
+    // TOKEN EXPIRED / UNAUTHORIZED
+    // ===============================
+    if (status === 401 && token) {
+      localStorage.removeItem("token");
+
+      // If using HashRouter:
+      // window.location.replace("/#/");
+      window.location.replace("/");
+
+      return Promise.reject({
+        message: "Session expired. Please login again.",
+      });
+    }
+
+    // ===============================
+    // RETURN CLEAN ERROR MESSAGE
+    // ===============================
+    const message =
+      error?.response?.data?.message ||
+      error?.response?.data?.error ||
+      "Something went wrong";
+
+    return Promise.reject({
+      status,
+      message,
+    });
   }
 );
 
