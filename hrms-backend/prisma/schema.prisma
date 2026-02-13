@@ -1,0 +1,33 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id         Int         @id @default(autoincrement())
+  name       String
+  email      String      @unique
+  password   String
+  role       String
+  createdAt  DateTime    @default(now())
+  inductions Induction[]
+}
+
+model Department {
+  id   Int    @id @default(autoincrement())
+  name String
+}
+
+model Induction {
+  id          Int       @id @default(autoincrement())
+  employeeId  Int
+  status      String // NOT_STARTED | IN_PROGRESS | COMPLETED
+  assignedAt  DateTime  @default(now())
+  completedAt DateTime?
+
+  employee User @relation(fields: [employeeId], references: [id])
+}
